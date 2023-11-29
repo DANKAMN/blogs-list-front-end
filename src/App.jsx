@@ -9,12 +9,14 @@ const App = () => {
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
-    url: ''
+    url: '',
+    likes: ''
   })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [loginDisplay, setLoginDisplay] = useState(false)
+  const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -38,12 +40,13 @@ const App = () => {
   }
 
   const addBlog = (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault()
   
     const blogObject = {
       title: newBlog.title,
       author: newBlog.author,
       url: newBlog.url,
+      likes: Number(newBlog.likes)
     };
   
     blogService.create(blogObject)
@@ -52,7 +55,8 @@ const App = () => {
         setNewBlog({
           title: '',
           author: '',
-          url: ''
+          url: '',
+          likes: ''
         });
       })
       .catch(error => {
@@ -75,21 +79,31 @@ const App = () => {
         user ?
         <>
           <p>{user.name} is logged in <button onClick={handleLogout}>Logout</button> </p>
-          <form onSubmit={addBlog}>
-            <div className="">
-              <label>Title: </label>
-              <input type='text' name="title" value={newBlog.title} onChange={handleInputChange} placeholder='title' />
-            </div>
-            <div className="">
-              <label>Author: </label>
-              <input type='text' name="author" value={newBlog.author} onChange={handleInputChange} placeholder='author' />
-            </div>
-            <div className="">
-              <label>URL: </label>
-              <input type='text' name="url" value={newBlog.url} onChange={handleInputChange} placeholder='www.exampleblog.com' />
-            </div>
-            <button type='submit'>Save</button>
-          </form>
+          <button onClick={() => setShowForm(true)}>new blog</button>
+          { showForm &&
+            <form onSubmit={addBlog}>
+              <div className="">
+                <label>Title: </label>
+                <input type='text' name="title" value={newBlog.title} onChange={handleInputChange} placeholder='title' />
+              </div>
+              <div className="">
+                <label>Author: </label>
+                <input type='text' name="author" value={newBlog.author} onChange={handleInputChange} placeholder='author' />
+              </div>
+              <div className="">
+                <label>URL: </label>
+                <input type='text' name="url" value={newBlog.url} onChange={handleInputChange} placeholder='www.exampleblog.com' />
+              </div>
+              <div className="">
+                <label>Likes: </label>
+                <input type='number' name="likes" value={newBlog.likes} onChange={handleInputChange} />
+              </div>
+              <button type='submit'>Save</button>
+              <button onClick={() => setShowForm(false)}>Cancel</button>
+            </form>
+            
+          }
+          
         </> :
           <>
             {loginDisplay ? <Login username={username} user={user} password={password} setPassword={setPassword} setUser={setUser} setUsername={setUsername} handleLogout={handleLogout} /> : <button onClick={() => setLoginDisplay(true)}>login</button> }
