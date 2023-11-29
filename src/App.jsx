@@ -14,6 +14,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginDisplay, setLoginDisplay] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,6 +34,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    setLoginDisplay(false)
   }
 
   const addBlog = (event) => {
@@ -89,7 +91,10 @@ const App = () => {
             <button type='submit'>Save</button>
           </form>
         </> :
-          <Login username={username} user={user} password={password} setPassword={setPassword} setUser={setUser} setUsername={setUsername} handleLogout={handleLogout} />
+          <>
+            {loginDisplay ? <Login username={username} user={user} password={password} setPassword={setPassword} setUser={setUser} setUsername={setUsername} handleLogout={handleLogout} /> : <button onClick={() => setLoginDisplay(true)}>login</button> }
+          </>
+          
       }
       <h2>blogs</h2>
       {blogs.map(blog =>
